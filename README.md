@@ -38,8 +38,9 @@ banco (Row Level Security), não pela aplicação.
 ```
 supabase/
   migrations/
-    20250913000000_petgestor_schema_seguranca.sql   # schema base + RLS
-    20250913010000_petgestor_correcoes_seguranca.sql # correções de segurança/integridade
+    20250913000000_petgestor_schema_seguranca.sql              # schema base + RLS
+    20250913010000_petgestor_correcoes_seguranca.sql            # correções de segurança/integridade
+    20250913020000_petgestor_correcoes_tenant_pedido_e_colunas_sensiveis.sql # correções pós-auditoria
 ```
 
 As migrations devem ser aplicadas **nessa ordem**. A segunda depende de
@@ -73,8 +74,17 @@ Ou, direto pelo SQL Editor do painel do Supabase: rode os arquivos de
   `anon`; leitura é só via `service_role` (painel interno).
 - Colunas públicas de `petshops` (para resolver a página pública pelo
   slug) são expostas via `grant select (id, nome, slug, logo_url)` — o
-  `select` amplo é revogado do papel `anon` antes disso, então dados como
-  `cnpj` e `trial_expira_em` não vazam.
+  `select` amplo é revogado tanto de `anon` quanto de `authenticated`,
+  então dados administrativos como `cnpj`, `plano_id` e
+  `trial_expira_em` não vazam nem pra clientes finais logados.
+- Dados administrativos do próprio petshop (`cnpj`, `plano_id`,
+  `trial_expira_em`, `cidade`, `estado`) e o `cpf`/`telefone` de
+  funcionários não ficam mais na tabela base pra qualquer
+  `authenticated` — ficam em views dedicadas: `meu_petshop` (staff do
+  próprio petshop), `meu_perfil_admin` (o próprio staff) e
+  `equipe_admin_pii` (só `dono`/`gerente`, pra RH/folha). O frontend
+  deve consultar essas views em vez da tabela base quando precisar
+  desses campos.
 
 ## Frontend
 
