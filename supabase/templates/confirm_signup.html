@@ -1,0 +1,19 @@
+<!--
+  Template "Confirm signup" (Authentication → Email Templates → Confirm signup).
+  NÃO é o template "Magic Link". Cole este conteúdo no campo "Message body".
+  Subject sugerido: Seu código de confirmação - PetGestor
+
+  Usa só {{ .Token }} (código numérico). Não há {{ .ConfirmationURL }} aqui
+  de propósito: o e-mail não deve ter link clicável de confirmação.
+-->
+<h2>Confirme seu cadastro</h2>
+
+<p>Use o código abaixo para confirmar seu e-mail no PetGestor:</p>
+
+<p style="font-size: 32px; font-weight: bold; letter-spacing: 8px; margin: 24px 0;">
+  {{ .Token }}
+</p>
+
+<p>Digite esse código na tela de confirmação do cadastro.</p>
+
+<p>Se você não fez esse cadastro, ignore este e-mail.</p>
